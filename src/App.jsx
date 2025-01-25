@@ -24,16 +24,16 @@ import React, { useEffect, useRef, useState } from 'react';
           y: canvas.height / 2,
           width: 40,
           height: 30,
-          gravity: 0.8, // Increased gravity for faster falling
-          lift: -12, // Increased lift for faster upward movement
+          gravity: 0.8,
+          lift: -12,
           velocity: 0,
           color: '#FFD700'
         };
 
         const pipes = [];
         const pipeWidth = 80;
-        const pipeGap = 180; // Slightly increased gap for playability
-        const pipeSpeed = 6; // Increased pipe speed
+        const pipeGap = 180;
+        const pipeSpeed = 6;
         let frame = 0;
 
         const drawBird = () => {
@@ -97,7 +97,7 @@ import React, { useEffect, useRef, useState } from 'react';
         };
 
         const updatePipes = () => {
-          if (frame % 50 === 0) { // Reduced frame interval for faster pipe generation
+          if (frame % 50 === 0) {
             const top = Math.random() * (canvas.height - pipeGap - 100) + 50;
             const bottom = canvas.height - top - pipeGap;
             pipes.push({ x: canvas.width, top, bottom });
@@ -152,12 +152,20 @@ import React, { useEffect, useRef, useState } from 'react';
           }
         };
 
+        const handleTouch = () => {
+          if (!gameOver) {
+            bird.velocity = bird.lift;
+          }
+        };
+
         document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('touchstart', handleTouch);
 
         gameLoop();
 
         return () => {
           document.removeEventListener('keydown', handleKeyDown);
+          document.removeEventListener('touchstart', handleTouch);
           cancelAnimationFrame(animationFrameRef.current);
           window.removeEventListener('resize', resizeCanvas);
         };
@@ -173,12 +181,25 @@ import React, { useEffect, useRef, useState } from 'react';
       };
 
       const toggleFullScreen = () => {
-        if (!isFullScreen) {
-          document.documentElement.requestFullscreen();
+        if (!document.fullscreenElement) {
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          } else if (document.documentElement.webkitRequestFullscreen) { // Safari
+            document.documentElement.webkitRequestFullscreen();
+          } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+            document.documentElement.msRequestFullscreen();
+          }
+          setIsFullScreen(true);
         } else {
-          document.exitFullscreen();
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) { // Safari
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) { // IE/Edge
+            document.msExitFullscreen();
+          }
+          setIsFullScreen(false);
         }
-        setIsFullScreen(!isFullScreen);
       };
 
       return (
