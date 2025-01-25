@@ -1,0 +1,9 @@
+{
+      "name": "flappy-bird",
+      "scripts": {
+            "dev": "vite"
+      },
+      "devDependencies": {
+            "vite": "^4.5.9"
+      }
+}
